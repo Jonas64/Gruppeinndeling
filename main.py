@@ -1,13 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-r = tk.Tk()
 
+# Setup
+r = tk.Tk()
 r.title("Gruppeinndeling")
 r.geometry("420x720")
 r.tk.call("source", "azure.tcl")
 r.tk.call("set_theme", "dark")
 
+# Variabler
 names = []
 current_name = tk.StringVar()
 num_groups = tk.IntVar()
@@ -15,6 +17,7 @@ num_groups.set(2)
 num_groups_num_ppl = tk.IntVar()
 num_groups_num_ppl.set(0)
 
+# Functions
 def add_name(): # Legg til et navn
     if current_name.get() == "": # Hvis brukere ikke har skrevet noe
         messagebox.showerror("Feil", "Skriv et navn.")
@@ -23,27 +26,27 @@ def add_name(): # Legg til et navn
     else: # Ingen problemer
         names.append(current_name.get()) # Legg til navnet som en string i names lista
         name_list.insert(names.index(current_name.get()), current_name.get()) # Legg til navnet i lista som vises
-        print(names)
 
 def delete_names(): # Slett de valgte navnene
     selected_item = name_list.curselection()
     for item in selected_item[::-1]:
         name_list.delete(item)
         del names[item]
-    print(names)
 
 def change_num_groups_num_ppl(): # Bytte mellom å velg antall folk i hver gruppe og antall grupper
     if num_groups_num_ppl.get():
         num_groups_spinbox.config(state=tk.NORMAL)
     else:
-        num_groups_spinbox.config(state="readonly")
+        num_groups_spinbox.config(state=tk.DISABLED)
 
 
+# Frames
 add_name_frame = ttk.Frame(r)
 num_groups_frame = ttk.Frame(r)
 num_groups_num_ppl_check_frame = ttk.Frame(r)
 
 
+# Lage alle widgetsa
 name_list = tk.Listbox(r, selectmode=tk.EXTENDED, font=("TkDefaultFont", 14))
 
 add_name_entry = ttk.Entry(add_name_frame, textvariable=current_name) # Skrive inn navn
@@ -58,6 +61,7 @@ num_groups_lbl = ttk.Label(num_groups_frame, text="Antall grupper:")
 num_groups_spinbox = ttk.Spinbox(num_groups_frame, textvariable=num_groups, from_=2, to=999, increment=1, state=tk.DISABLED)
 
 
+# Pack alle tingene
 add_name_frame.pack(side=tk.TOP, pady=20)
 name_list.pack(fill="x", padx=30)
 remove_name_btn.pack(pady=10)

@@ -50,6 +50,8 @@ def delete_names(): # Slett de valgte navnene
 def import_names():
     global names
     file_path = filedialog.askopenfilename(filetypes=[("Comma-separated Values", "*.csv")])
+    if file_path == "":
+        return
     temp_names = []
     with open(file_path, "r") as f:
         temp_names = f.readlines()
@@ -134,10 +136,10 @@ def generate_groups():
         return
     else:
         together_dict = {} # Alle navnene som skal være sammen med noen og hvem de skal være sammen med
-        for t in together:
+        for t in together: # Sette opp dict
             for n in t:
                 together_dict[n] = []
-        for name in together_dict:
+        for name in together_dict: # Legg til navn
             for t in together:
                 if name in t:
                     if name == t[0]:
@@ -146,10 +148,10 @@ def generate_groups():
                         together_dict[name].append(t[0])
         
         separated_dict = {} # Alle navnene som skal være separert med noen og hvem de skal være separert med
-        for sep in separated:
+        for sep in separated: # Sette opp dict
             for n in sep:
                 separated_dict[n] = []
-        for name in separated_dict:
+        for name in separated_dict: # Legg til navn
             for sep in separated:
                 if name in sep:
                     if name == sep[0]:
@@ -160,7 +162,7 @@ def generate_groups():
         names_shuffle = [1]
 
         outer_loop_count = 0
-        while len(names_shuffle) > 0 and outer_loop_count < 100: # Hvis det ikke gikk å generere grupper, lag ny names_shuffle og prøv igjen
+        while len(names_shuffle) > 0 and outer_loop_count < 100: # Går det ikke å generere grupper, lag ny names_shuffle og prøv igjen
             names_shuffle = names.copy() # Lag ny names_shuffle hvis det ikke gikk
             random.shuffle(names_shuffle)
 
@@ -176,18 +178,19 @@ def generate_groups():
                     separated_ok = True
                     if name in separated_dict:
                         for sep_name in separated_dict[name]:
-                            if sep_name in groups[i]:
+                            if sep_name in groups[i]: # Hvis navnet som personen ikke kan være med er i gruppa
                                 separated_ok = False
 
                     together_ok = True
                     if name in together_dict:
                         for t_name in together_dict[name]:
                             groups_empty = True
-                            for g_i, group in enumerate(groups):
+                            for g_i, group in enumerate(groups): # Gå gjennom alle gruppene for å sjekke om navnet som personen må være
+                                                                 # med er i en annen gruppe
                                 for t in together_dict[name]:
                                     if t in group and g_i != i: # Hvis den som navnet må være med er i en annen gruppe
                                         together_ok = False
-                                if group != []:
+                                if group != []: # Hvis gruppa ikke er tom
                                     groups_empty = False
                             
                             if t_name not in groups[i] and not groups_empty: # Hvis navnet ikke er i gruppa og gruppene ikke er tomme
@@ -209,6 +212,11 @@ def generate_groups():
                 loop_count += 1
             outer_loop_count += 1
         
+
+    if len(names_shuffle) > 0:
+        messagebox.showerror("Feil", "Kunne ikke generere grupper.")
+        return
+    
     groups_listboxes_frame.destroy() # Destroy frame og alle listboxes i den (fjerne forrige grupper som ble generert)
     groups_listboxes = []
     groups_listboxes_frame = ttk.Frame(r)
@@ -319,7 +327,6 @@ def reset_advanced(): # Reset alle avanserte alternativer
     separated = []
     not_in_group_lbl.config(text="")
     set_in_group_lbl.config(text="")
-
 
 
 # Frames
